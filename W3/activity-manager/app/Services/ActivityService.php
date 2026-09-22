@@ -7,12 +7,6 @@ use DomainException;
 
 class ActivityService
 {
-    private const TRANSITIONS = [
-        'Planned' => ['Planned', 'Ongoing'],
-        'Ongoing' => ['Ongoing', 'Done'],
-        'Done' => ['Done'],
-    ];
-
     public function create(array $data): Activity
     {
         return Activity::create($data);
@@ -20,21 +14,34 @@ class ActivityService
 
     public function update(Activity $activity, array $data): Activity
     {
-        $nextStatus = $data['status'] ?? $activity->status;
-        $this->ensureValidTransition($activity->status, $nextStatus);
+        if (isset($data['status'])) {
+            $this->ensureValidTransition($activity->status, $data['status']);
+        }
+
         $activity->update($data);
 
-        return $activity->refresh();
+        return $activity;
     }
 
     private function ensureValidTransition(
         string $current,
         string $next
     ): void {
-        $allowed = self::TRANSITIONS[$current] ?? [];
+        if ($current === $next) {
+            return;
+        }
 
-        if (! in_array($next, $allowed, true)) {
-            throw new DomainException("Transisi status dari {$current} ke {$next} tidak diperbolehkan.");
+        $allowedTransitions = [
+            'Planned' => ['Ongoing'],
+            'Ongoing' => ['Done'],
+            'Done' => [],
+            'pending' => ['in_progress'],
+            'in_progress' => ['completed'],
+            'completed' => [],
+        ];
+
+        if (! isset($allowedTransitions[$current]) || ! in_array($next, $allowedTransitions[$current], true)) {
+            throw new DomainException("Transisi status dari {$current} ke {$next} tidak diizinkan.");
         }
     }
 }

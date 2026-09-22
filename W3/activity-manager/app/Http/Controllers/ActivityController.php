@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Activity;
 use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
-use Illuminate\View\View;
+use App\Models\Activity;
+use App\Services\ActivityService;
+use DomainException;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class ActivityController extends Controller
 {
     public function index(): View
     {
         $activities = Activity::latest()->paginate(10);
+
         return view('activities.index', compact('activities'));
     }
 
@@ -21,11 +24,11 @@ class ActivityController extends Controller
         return view('activities.create');
     }
 
-    public function store(StoreActivityRequest $request): RedirectResponse
+    public function store(StoreActivityRequest $request, ActivityService $service): RedirectResponse
     {
-        $activity = Activity::create($request->validated());
+        $activity = $service->create($request->validated());
 
-        return redirect()->route('activities.show', $activity->id)
+        return redirect()->route('activities.show', $activity)
             ->with('success', 'Aktivitas berhasil ditambahkan!');
     }
 
@@ -39,12 +42,19 @@ class ActivityController extends Controller
         return view('activities.edit', compact('activity'));
     }
 
-    public function update(UpdateActivityRequest $request, Activity $activity): RedirectResponse
-    {
-        $activity->update($request->validated());
+    public function update(
+        UpdateActivityRequest $request,
+        Activity $activity,
+        ActivityService $service
+    ): RedirectResponse {
+        try {
+            $service->update($activity, $request->validated());
 
-        return redirect()->route('activities.show', $activity->id)
-            ->with('success', 'Aktivitas berhasil diperbarui!');
+            return redirect()->route('activities.show', $activity)
+                ->with('success', 'Aktivitas berhasil diperbarui!');
+        } catch (DomainException $e) {
+            return back()->withInput()->withErrors(['status' => $e->getMessage()]);
+        }
     }
 
     public function destroy(Activity $activity): RedirectResponse
