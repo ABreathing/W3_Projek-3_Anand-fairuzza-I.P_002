@@ -16,7 +16,7 @@ class StoreActivityRequest extends FormRequest
         return [
             'title' => 'required|string|min:5|max:255',
             'description' => 'nullable|string',
-            'status' => 'required|in:pending,in_progress,completed,Planned,Ongoing,Done',
+            'status' => 'required|in:pending,in_progress,completed',
             'due_date' => 'required|date',
         ];
     }

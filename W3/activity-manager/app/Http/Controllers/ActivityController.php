@@ -8,15 +8,29 @@ use App\Models\Activity;
 use App\Services\ActivityService;
 use DomainException;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ActivityController extends Controller
 {
-    public function index(): View
-    {
-        $activities = Activity::latest()->paginate(10);
+    // status valid sesuai enum di migration, dipake buat validasi filter
+    private const VALID_STATUSES = ['pending', 'in_progress', 'completed'];
 
-        return view('activities.index', compact('activities'));
+    public function index(Request $request): View
+    {
+        $status = $request->query('status');
+        $isValidStatus = in_array($status, self::VALID_STATUSES, true);
+
+        $activities = Activity::query()
+            ->when($isValidStatus, fn ($query) => $query->where('status', $status))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        // kalau nilai status di URL gak valid, dropdown balik nampilin "Semua"
+        $status = $isValidStatus ? $status : null;
+
+        return view('activities.index', compact('activities', 'status'));
     }
 
     public function create(): View

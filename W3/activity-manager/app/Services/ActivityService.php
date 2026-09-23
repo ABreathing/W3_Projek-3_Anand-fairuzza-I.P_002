@@ -31,10 +31,8 @@ class ActivityService
             return;
         }
 
+        // sesuai enum status di migration, gak perlu penamaan ganda lagi
         $allowedTransitions = [
-            'Planned' => ['Ongoing'],
-            'Ongoing' => ['Done'],
-            'Done' => [],
             'pending' => ['in_progress'],
             'in_progress' => ['completed'],
             'completed' => [],

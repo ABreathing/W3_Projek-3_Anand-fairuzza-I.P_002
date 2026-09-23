@@ -6,6 +6,22 @@
     <a href="{{ route('activities.create') }}" class="btn btn-primary">+ Tambah Aktivitas</a>
 </div>
 
+<form method="GET" action="{{ route('activities.index') }}" class="row g-2 mb-3">
+    <div class="col-auto">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="" {{ !$status ? 'selected' : '' }}>Semua</option>
+            <option value="pending" {{ $status == 'pending' ? 'selected' : '' }}>Pending</option>
+            <option value="in_progress" {{ $status == 'in_progress' ? 'selected' : '' }}>Sedang Berjalan</option>
+            <option value="completed" {{ $status == 'completed' ? 'selected' : '' }}>Selesai</option>
+        </select>
+    </div>
+    @if($status)
+        <div class="col-auto">
+            <a href="{{ route('activities.index') }}" class="btn btn-outline-secondary">Reset Filter</a>
+        </div>
+    @endif
+</form>
+
 <div class="card shadow-sm">
     <div class="card-body">
         <table class="table table-striped table-hover align-middle mb-0">
