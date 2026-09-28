@@ -40,7 +40,7 @@
            id="due_date" 
            name="due_date" 
            class="form-control @error('due_date') is-invalid @enderror" 
-           value="{{ old('due_date', $activity->due_date ?? '') }}">
+           value="{{ old('due_date', ($activity->due_date ?? null)?->format('Y-m-d')) }}"
     @error('due_date')
         <p class="text-danger small mt-1">{{ $message }}</p>
     @enderror

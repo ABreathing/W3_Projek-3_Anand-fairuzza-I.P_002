@@ -32,3 +32,14 @@ npm run build
 6. **Jalankan Server**
 php artisan serve
 buka `http://localhost:8000` nanti langsung redirect ke `/activities`
+
+## Route Utama
+| Method | URI | Aksi |
+|---|---|---|
+| GET | /activities | daftar aktivitas + filter status |
+| GET | /activities/create | form tambah aktivitas |
+| POST | /activities | simpan aktivitas baru |
+| GET | /activities/{id} | detail aktivitas |
+| GET | /activities/{id}/edit | form edit aktivitas |
+| PUT/PATCH | /activities/{id} | update aktivitas |
+| DELETE | /activities/{id} | hapus aktivitas |
