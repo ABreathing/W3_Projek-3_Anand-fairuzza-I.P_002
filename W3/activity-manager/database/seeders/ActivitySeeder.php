@@ -10,38 +10,39 @@ class ActivitySeeder extends Seeder
     public function run(): void
     {
         Activity::create([
-            'title' => 'Membuat Laporan Modul Laravel',
-            'description' => 'Menyelesaikan modul CRUD untuk project activity-manager.',
-            'status' => 'in_progress',
-            'due_date' => now()->addDays(3),
+            'category_id' => 1,
+            'code' => 'WS-001',
+            'title' => 'Workshop Git Dasar',
+            'description' => 'Latihan kolaborasi repository.',
+            'location' => 'Lab Komputer 1',
+            'start_at' => now()->addDays(7),
+            'end_at' => now()->addDays(7)->addHours(3),
+            'capacity' => 30,
+            'status' => 'draft',
         ]);
 
         Activity::create([
-            'title' => 'Rapat Tim Pengembang',
-            'description' => 'Membahas pembagian tugas fitur autentikasi.',
-            'status' => 'pending',
-            'due_date' => now()->addDays(5),
+            'category_id' => 2,
+            'code' => 'SM-001',
+            'title' => 'Seminar Web Quality',
+            'description' => 'Pengenalan maintainability dan testing.',
+            'location' => 'Aula Gedung A',
+            'start_at' => now()->addDays(14),
+            'end_at' => now()->addDays(14)->addHours(2),
+            'capacity' => 100,
+            'status' => 'draft',
         ]);
 
         Activity::create([
-            'title' => 'Desain Database Activity',
-            'description' => 'Merancang ERD dan skema tabel untuk sistem manajemen aktivitas.',
-            'status' => 'completed',
-            'due_date' => now()->subDays(2),
-        ]);
-
-        Activity::create([
-            'title' => 'Testing Fitur CRUD',
-            'description' => 'Menguji fungsi create, read, update, dan delete di browser.',
-            'status' => 'pending',
-            'due_date' => now()->addDays(7),
-        ]);
-
-        Activity::create([
-            'title' => 'Deployment ke Staging',
-            'description' => 'Mempersiapkan aplikasi agar bisa diakses tim testing.',
-            'status' => 'pending',
-            'due_date' => now()->addDays(10),
+            'category_id' => 1,
+            'code' => 'WS-002',
+            'title' => 'Workshop Laravel Dasar',
+            'description' => 'Membangun CRUD pertama dengan Laravel.',
+            'location' => 'Lab Komputer 2',
+            'start_at' => now()->addDays(21),
+            'end_at' => now()->addDays(21)->addHours(4),
+            'capacity' => 25,
+            'status' => 'draft',
         ]);
     }
 }
