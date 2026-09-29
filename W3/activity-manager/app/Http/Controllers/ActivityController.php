@@ -9,17 +9,26 @@ use App\Models\Category;
 use App\Services\ActivityService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ActivityController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $activities = Activity::query()
-            ->orderByDesc('start_at')
-            ->paginate(10);
+            ->search($request->input('search'))
+            ->filterCategory($request->input('category_id'))
+            ->filterStatus($request->input('status'))
+            ->sortByDate($request->input('sort'))
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('activities.index', compact('activities'));
+        return view('activities.index', [
+            'activities' => $activities,
+            'categories' => Category::orderBy('name')->get(),
+            'filters' => $request->only(['search', 'category_id', 'status', 'sort']),
+        ]);
     }
 
     public function create(): View
@@ -67,6 +76,28 @@ class ActivityController extends Controller
 
         return to_route('activities.index')
             ->with('success', 'Kegiatan berhasil dihapus.');
+    }
+
+    public function publish(Activity $activity, ActivityService $service): RedirectResponse
+    {
+        try {
+            $service->publish($activity);
+        } catch (\Illuminate\Validation\ValidationException $exception) {
+            return back()->withErrors($exception->errors());
+        }
+
+        return back()->with('success', 'Kegiatan berhasil dipublikasikan.');
+    }
+
+    public function complete(Activity $activity, ActivityService $service): RedirectResponse
+    {
+        try {
+            $service->complete($activity);
+        } catch (\Illuminate\Validation\ValidationException $exception) {
+            return back()->withErrors($exception->errors());
+        }
+
+        return back()->with('success', 'Kegiatan ditandai selesai.');
     }
 
     private function categoryOptions(): Collection
