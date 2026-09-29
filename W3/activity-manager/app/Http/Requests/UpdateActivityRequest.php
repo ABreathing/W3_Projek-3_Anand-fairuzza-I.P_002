@@ -2,34 +2,19 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class UpdateActivityRequest extends FormRequest
+class UpdateActivityRequest extends StoreActivityRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
-        return [
-            'title' => 'required|string|min:5|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|in:pending,in_progress,completed',
-            'due_date' => 'required|date',
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'title.required' => 'Judul wajib diisi.',
-            'title.min' => 'Judul minimal harus 5 karakter.',
-            'status.required' => 'Status wajib dipilih.',
-            'status.in' => 'Status tidak valid.',
-            'due_date.required' => 'Tanggal tenggat wajib diisi.',
-            'due_date.date' => 'Format tanggal tidak valid.',
-        ];
+        return array_merge(parent::rules(), [
+            'code' => [
+                'required',
+                'string',
+                'max:30',
+                Rule::unique('activities', 'code')->ignore($this->route('activity')),
+            ],
+        ]);
     }
 }
