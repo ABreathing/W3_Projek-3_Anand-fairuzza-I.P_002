@@ -5,45 +5,36 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
+use App\Models\Category;
 use App\Services\ActivityService;
-use DomainException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ActivityController extends Controller
 {
-    // status valid sesuai enum di migration, dipake buat validasi filter
-    private const VALID_STATUSES = ['pending', 'in_progress', 'completed'];
-
-    public function index(Request $request): View
+    public function index(): View
     {
-        $status = $request->query('status');
-        $isValidStatus = in_array($status, self::VALID_STATUSES, true);
-
         $activities = Activity::query()
-            ->when($isValidStatus, fn ($query) => $query->where('status', $status))
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+            ->orderByDesc('start_at')
+            ->paginate(10);
 
-        // kalau nilai status di URL gak valid, dropdown balik nampilin "Semua"
-        $status = $isValidStatus ? $status : null;
-
-        return view('activities.index', compact('activities', 'status'));
+        return view('activities.index', compact('activities'));
     }
 
     public function create(): View
     {
-        return view('activities.create');
+        return view('activities.create', [
+            'categories' => $this->categoryOptions(),
+        ]);
     }
 
     public function store(StoreActivityRequest $request, ActivityService $service): RedirectResponse
     {
         $activity = $service->create($request->validated());
 
-        return redirect()->route('activities.show', $activity)
-            ->with('success', 'Aktivitas berhasil ditambahkan!');
+        return to_route('activities.show', $activity)
+            ->with('success', 'Kegiatan berhasil ditambahkan.');
     }
 
     public function show(Activity $activity): View
@@ -53,7 +44,10 @@ class ActivityController extends Controller
 
     public function edit(Activity $activity): View
     {
-        return view('activities.edit', compact('activity'));
+        return view('activities.edit', [
+            'activity' => $activity,
+            'categories' => $this->categoryOptions(),
+        ]);
     }
 
     public function update(
@@ -61,21 +55,22 @@ class ActivityController extends Controller
         Activity $activity,
         ActivityService $service
     ): RedirectResponse {
-        try {
-            $service->update($activity, $request->validated());
+        $service->update($activity, $request->validated());
 
-            return redirect()->route('activities.show', $activity)
-                ->with('success', 'Aktivitas berhasil diperbarui!');
-        } catch (DomainException $e) {
-            return back()->withInput()->withErrors(['status' => $e->getMessage()]);
-        }
+        return to_route('activities.show', $activity)
+            ->with('success', 'Kegiatan berhasil diperbarui.');
     }
 
     public function destroy(Activity $activity): RedirectResponse
     {
         $activity->delete();
 
-        return redirect()->route('activities.index')
-            ->with('success', 'Aktivitas berhasil dihapus!');
+        return to_route('activities.index')
+            ->with('success', 'Kegiatan berhasil dihapus.');
+    }
+
+    private function categoryOptions(): Collection
+    {
+        return Category::orderBy('name')->get();
     }
 }

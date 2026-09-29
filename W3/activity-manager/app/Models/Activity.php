@@ -9,14 +9,18 @@ class Activity extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'title',
-        'description',
-        'status',
-        'due_date',
-    ];
-    protected function casts(): array
+protected $fillable = [
+    'category_id', 'code', 'title', 'description',
+    'location', 'start_at', 'end_at', 'capacity', 'status',
+];
+
+protected function casts(): array
 {
-    return ['due_date' => 'date'];
+    return ['start_at' => 'datetime', 'end_at' => 'datetime'];
+}
+
+public function category()
+{
+    return $this->belongsTo(Category::class);
 }
 }

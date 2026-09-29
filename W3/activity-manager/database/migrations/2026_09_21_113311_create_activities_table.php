@@ -10,10 +10,14 @@ return new class extends Migration
     {
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->string('code', 30)->unique();
+            $table->string('title', 100);
             $table->text('description')->nullable();
-            $table->enum('status', ['pending', 'in_progress', 'completed'])->default('pending');
-            $table->date('due_date')->nullable();
+            $table->string('location');
+            $table->dateTime('start_at');
+            $table->dateTime('end_at');
+            $table->unsignedInteger('capacity');
+            $table->string('status', 20)->default('draft');
             $table->timestamps();
         });
     }

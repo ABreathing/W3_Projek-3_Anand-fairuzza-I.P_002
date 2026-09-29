@@ -1,9 +1,36 @@
 <div class="mb-3">
-    <label for="title" class="form-label">Judul Aktivitas</label>
-    <input type="text" 
-           id="title" 
-           name="title" 
-           class="form-control @error('title') is-invalid @enderror" 
+    <label for="category_id" class="form-label">Kategori</label>
+    <select id="category_id" name="category_id" class="form-select @error('category_id') is-invalid @enderror">
+        <option value="">-- Pilih Kategori --</option>
+        @foreach ($categories as $category)
+            <option value="{{ $category->id }}" @selected(old('category_id', $activity->category_id ?? '') == $category->id)>
+                {{ $category->name }}
+            </option>
+        @endforeach
+    </select>
+    @error('category_id')
+        <p class="text-danger small mt-1">{{ $message }}</p>
+    @enderror
+</div>
+
+<div class="mb-3">
+    <label for="code" class="form-label">Kode Kegiatan</label>
+    <input type="text"
+           id="code"
+           name="code"
+           class="form-control @error('code') is-invalid @enderror"
+           value="{{ old('code', $activity->code ?? '') }}">
+    @error('code')
+        <p class="text-danger small mt-1">{{ $message }}</p>
+    @enderror
+</div>
+
+<div class="mb-3">
+    <label for="title" class="form-label">Judul Kegiatan</label>
+    <input type="text"
+           id="title"
+           name="title"
+           class="form-control @error('title') is-invalid @enderror"
            value="{{ old('title', $activity->title ?? '') }}">
     @error('title')
         <p class="text-danger small mt-1">{{ $message }}</p>
@@ -12,9 +39,9 @@
 
 <div class="mb-3">
     <label for="description" class="form-label">Deskripsi</label>
-    <textarea id="description" 
-              name="description" 
-              class="form-control @error('description') is-invalid @enderror" 
+    <textarea id="description"
+              name="description"
+              class="form-control @error('description') is-invalid @enderror"
               rows="4">{{ old('description', $activity->description ?? '') }}</textarea>
     @error('description')
         <p class="text-danger small mt-1">{{ $message }}</p>
@@ -22,26 +49,53 @@
 </div>
 
 <div class="mb-3">
-    <label for="status" class="form-label">Status</label>
-    <select id="status" name="status" class="form-select @error('status') is-invalid @enderror">
-        <option value="">-- Pilih Status --</option>
-        <option value="pending" {{ old('status', $activity->status ?? '') == 'pending' ? 'selected' : '' }}>Pending</option>
-        <option value="in_progress" {{ old('status', $activity->status ?? '') == 'in_progress' ? 'selected' : '' }}>Sedang Berjalan</option>
-        <option value="completed" {{ old('status', $activity->status ?? '') == 'completed' ? 'selected' : '' }}>Selesai</option>
-    </select>
-    @error('status')
+    <label for="location" class="form-label">Lokasi</label>
+    <input type="text"
+           id="location"
+           name="location"
+           class="form-control @error('location') is-invalid @enderror"
+           value="{{ old('location', $activity->location ?? '') }}">
+    @error('location')
         <p class="text-danger small mt-1">{{ $message }}</p>
     @enderror
 </div>
 
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label for="start_at" class="form-label">Tanggal Mulai</label>
+        <input type="datetime-local"
+               id="start_at"
+               name="start_at"
+               class="form-control @error('start_at') is-invalid @enderror"
+               value="{{ old('start_at', ($activity->start_at ?? null)?->format('Y-m-d\TH:i')) }}">
+        @error('start_at')
+            <p class="text-danger small mt-1">{{ $message }}</p>
+        @enderror
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label for="end_at" class="form-label">Tanggal Selesai</label>
+        <input type="datetime-local"
+               id="end_at"
+               name="end_at"
+               class="form-control @error('end_at') is-invalid @enderror"
+               value="{{ old('end_at', ($activity->end_at ?? null)?->format('Y-m-d\TH:i')) }}">
+        @error('end_at')
+            <p class="text-danger small mt-1">{{ $message }}</p>
+        @enderror
+    </div>
+</div>
+
 <div class="mb-3">
-    <label for="due_date" class="form-label">Tenggat Waktu</label>
-    <input type="date" 
-           id="due_date" 
-           name="due_date" 
-           class="form-control @error('due_date') is-invalid @enderror" 
-           value="{{ old('due_date', ($activity->due_date ?? null)?->format('Y-m-d')) }}"
-    @error('due_date')
+    <label for="capacity" class="form-label">Kapasitas</label>
+    <input type="number"
+           id="capacity"
+           name="capacity"
+           min="1"
+           max="500"
+           class="form-control @error('capacity') is-invalid @enderror"
+           value="{{ old('capacity', $activity->capacity ?? '') }}">
+    @error('capacity')
         <p class="text-danger small mt-1">{{ $message }}</p>
     @enderror
 </div>

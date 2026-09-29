@@ -10,6 +10,10 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('activities.index') }}">Activity Manager</a>
+            <div class="navbar-nav flex-row gap-3">
+                <a class="nav-link" href="{{ route('activities.index') }}">Kegiatan</a>
+                <a class="nav-link" href="{{ route('categories.index') }}">Kategori</a>
+            </div>
         </div>
     </nav>
 
@@ -17,6 +21,13 @@
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
