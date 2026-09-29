@@ -6,6 +6,42 @@
     <a href="{{ route('activities.create') }}" class="btn btn-primary">+ Tambah Kegiatan</a>
 </div>
 
+<form method="GET" action="{{ route('activities.index') }}" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input type="text" name="search" class="form-control" placeholder="Cari judul atau kode..."
+               value="{{ $filters['search'] ?? '' }}">
+    </div>
+    <div class="col-md-3">
+        <select name="category_id" class="form-select">
+            <option value="">-- Semua Kategori --</option>
+            @foreach ($categories as $category)
+                <option value="{{ $category->id }}" @selected(($filters['category_id'] ?? '') == $category->id)>
+                    {{ $category->name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="status" class="form-select">
+            <option value="">-- Semua Status --</option>
+            @foreach (['draft', 'published', 'completed'] as $statusOption)
+                <option value="{{ $statusOption }}" @selected(($filters['status'] ?? '') == $statusOption)>
+                    {{ ucfirst($statusOption) }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="sort" class="form-select">
+            <option value="newest" @selected(($filters['sort'] ?? 'newest') == 'newest')>Tanggal Terbaru</option>
+            <option value="oldest" @selected(($filters['sort'] ?? '') == 'oldest')>Tanggal Terlama</option>
+        </select>
+    </div>
+    <div class="col-md-1">
+        <button type="submit" class="btn btn-outline-primary w-100">Cari</button>
+    </div>
+</form>
+
 <div class="card shadow-sm">
     <div class="card-body">
         <table class="table table-striped table-hover align-middle mb-0">
@@ -41,7 +77,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-4">Belum ada kegiatan.</td>
+                        <td colspan="7" class="text-center text-muted py-4">Belum ada kegiatan yang cocok.</td>
                     </tr>
                 @endforelse
             </tbody>
