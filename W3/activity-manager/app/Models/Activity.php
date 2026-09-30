@@ -12,7 +12,7 @@ class Activity extends Model
 
     protected $fillable = [
         'category_id', 'code', 'title', 'description',
-        'location', 'start_at', 'end_at', 'capacity', 'status',
+        'location', 'start_at', 'end_at', 'capacity', 'status', 'registered_count',
     ];
 
     protected function casts(): array
@@ -23,6 +23,11 @@ class Activity extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function registrations()
+    {
+        return $this->hasMany(Registration::class);
     }
 
     public function scopeSearch($query, ?string $keyword)

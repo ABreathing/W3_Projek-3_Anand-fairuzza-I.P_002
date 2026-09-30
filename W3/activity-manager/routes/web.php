@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\RegistrationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,6 +15,8 @@ Route::get('/activities-trash', [ActivityController::class, 'trash'])->name('act
 Route::patch('/activities/{id}/restore', [ActivityController::class, 'restore'])
     ->name('activities.restore')
     ->withTrashed();
+Route::post('/activities/{activity}/register', [RegistrationController::class, 'store'])
+    ->name('activities.register');
 
 Route::resource('activities', ActivityController::class);
 
