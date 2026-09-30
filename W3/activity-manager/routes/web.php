@@ -10,6 +10,10 @@ Route::get('/', function () {
 
 Route::patch('/activities/{activity}/publish', [ActivityController::class, 'publish'])->name('activities.publish');
 Route::patch('/activities/{activity}/complete', [ActivityController::class, 'complete'])->name('activities.complete');
+Route::get('/activities-trash', [ActivityController::class, 'trash'])->name('activities.trash');
+Route::patch('/activities/{id}/restore', [ActivityController::class, 'restore'])
+    ->name('activities.restore')
+    ->withTrashed();
 
 Route::resource('activities', ActivityController::class);
 

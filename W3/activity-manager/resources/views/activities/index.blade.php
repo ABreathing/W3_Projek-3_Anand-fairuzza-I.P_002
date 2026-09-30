@@ -3,9 +3,11 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Daftar Kegiatan</h2>
-    <a href="{{ route('activities.create') }}" class="btn btn-primary">+ Tambah Kegiatan</a>
+    <div>
+        <a href="{{ route('activities.trash') }}" class="btn btn-outline-secondary">Kegiatan Terhapus</a>
+        <a href="{{ route('activities.create') }}" class="btn btn-primary">+ Tambah Kegiatan</a>
+    </div>
 </div>
-
 <form method="GET" action="{{ route('activities.index') }}" class="row g-2 mb-3">
     <div class="col-md-4">
         <input type="text" name="search" class="form-control" placeholder="Cari judul atau kode..."

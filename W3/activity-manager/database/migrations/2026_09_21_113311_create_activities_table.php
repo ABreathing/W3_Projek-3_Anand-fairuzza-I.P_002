@@ -18,6 +18,7 @@ return new class extends Migration
             $table->dateTime('end_at');
             $table->unsignedInteger('capacity');
             $table->string('status', 20)->default('draft');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

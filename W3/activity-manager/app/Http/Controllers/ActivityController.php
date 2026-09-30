@@ -10,6 +10,7 @@ use App\Services\ActivityService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class ActivityController extends Controller
@@ -17,6 +18,7 @@ class ActivityController extends Controller
     public function index(Request $request): View
     {
         $activities = Activity::query()
+            ->with('category')
             ->search($request->input('search'))
             ->filterCategory($request->input('category_id'))
             ->filterStatus($request->input('status'))
@@ -82,7 +84,7 @@ class ActivityController extends Controller
     {
         try {
             $service->publish($activity);
-        } catch (\Illuminate\Validation\ValidationException $exception) {
+        } catch (ValidationException $exception) {
             return back()->withErrors($exception->errors());
         }
 
@@ -93,11 +95,30 @@ class ActivityController extends Controller
     {
         try {
             $service->complete($activity);
-        } catch (\Illuminate\Validation\ValidationException $exception) {
+        } catch (ValidationException $exception) {
             return back()->withErrors($exception->errors());
         }
 
         return back()->with('success', 'Kegiatan ditandai selesai.');
+    }
+
+    public function trash(): View
+    {
+        $activities = Activity::onlyTrashed()
+            ->with('category')
+            ->latest('deleted_at')
+            ->paginate(10);
+
+        return view('activities.trash', compact('activities'));
+    }
+
+    public function restore(int $id): RedirectResponse
+    {
+        $activity = Activity::onlyTrashed()->findOrFail($id);
+        $activity->restore();
+
+        return to_route('activities.index')
+            ->with('success', "Kegiatan \"{$activity->title}\" berhasil dipulihkan.");
     }
 
     private function categoryOptions(): Collection
