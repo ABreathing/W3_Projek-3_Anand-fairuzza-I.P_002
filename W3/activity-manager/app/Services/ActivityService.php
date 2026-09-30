@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Activity;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class ActivityService
@@ -15,13 +16,28 @@ class ActivityService
 
     public function create(array $data): Activity
     {
+        if (! empty($data['poster'])) {
+            $data['poster_path'] = $data['poster']->store('posters', 'public');
+        }
+        unset($data['poster']);
+
         return Activity::create(array_merge($data, ['status' => 'draft']));
     }
 
     public function update(Activity $activity, array $data): Activity
     {
-        // Form edit umum tidak boleh mengubah status (BR-06/BR-07).
         unset($data['status']);
+
+        if (! empty($data['poster'])) {
+            $newPath = $data['poster']->store('posters', 'public');
+
+            if ($activity->poster_path) {
+                Storage::disk('public')->delete($activity->poster_path);
+            }
+
+            $data['poster_path'] = $newPath;
+        }
+        unset($data['poster']);
 
         $activity->update($data);
 
@@ -32,7 +48,6 @@ class ActivityService
     {
         $this->ensureValidTransition($activity->status, 'published');
 
-        // BR-05: field wajib harus lengkap dan valid sebelum publish.
         $missing = array_filter([
             'category_id' => $activity->category_id,
             'code' => $activity->code,

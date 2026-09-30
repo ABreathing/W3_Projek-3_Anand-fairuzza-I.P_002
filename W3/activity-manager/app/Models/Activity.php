@@ -12,7 +12,8 @@ class Activity extends Model
 
     protected $fillable = [
         'category_id', 'code', 'title', 'description',
-        'location', 'start_at', 'end_at', 'capacity', 'status', 'registered_count',
+        'location', 'start_at', 'end_at', 'capacity', 'status',
+        'registered_count', 'poster_path',
     ];
 
     protected function casts(): array

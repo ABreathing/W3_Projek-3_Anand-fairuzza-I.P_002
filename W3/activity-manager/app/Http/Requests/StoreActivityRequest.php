@@ -22,6 +22,7 @@ class StoreActivityRequest extends FormRequest
             'start_at' => ['required', 'date'],
             'end_at' => ['required', 'date', 'after_or_equal:start_at'],
             'capacity' => ['required', 'integer', 'min:1', 'max:500'],
+            'poster' => ['nullable', 'image', 'max:2048'],
         ];
     }
 
@@ -45,6 +46,8 @@ class StoreActivityRequest extends FormRequest
             'capacity.integer' => 'Kapasitas harus berupa bilangan bulat.',
             'capacity.min' => 'Kapasitas minimal 1.',
             'capacity.max' => 'Kapasitas maksimal 500.',
+            'poster.image' => 'File harus berupa gambar.',
+            'poster.max' => 'Ukuran poster maksimal 2MB.',
         ];
     }
 }

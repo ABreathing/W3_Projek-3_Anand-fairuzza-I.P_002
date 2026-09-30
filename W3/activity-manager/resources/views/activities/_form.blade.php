@@ -99,3 +99,21 @@
         <p class="text-danger small mt-1">{{ $message }}</p>
     @enderror
 </div>
+
+<div class="mb-3">
+    <label for="poster" class="form-label">Poster (opsional, maks 2MB)</label>
+    <input type="file"
+           id="poster"
+           name="poster"
+           class="form-control @error('poster') is-invalid @enderror"
+           accept="image/*">
+    @error('poster')
+        <p class="text-danger small mt-1">{{ $message }}</p>
+    @enderror
+
+    @isset($activity)
+        @if ($activity->poster_path)
+            <img src="{{ asset('storage/' . $activity->poster_path) }}" class="mt-2" style="max-height:120px">
+        @endif
+    @endisset
+</div>

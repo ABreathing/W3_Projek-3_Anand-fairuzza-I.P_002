@@ -42,6 +42,8 @@ class ActivityController extends Controller
 
     public function store(StoreActivityRequest $request, ActivityService $service): RedirectResponse
     {
+        dd($_FILES);
+
         $activity = $service->create($request->validated());
 
         return to_route('activities.show', $activity)
